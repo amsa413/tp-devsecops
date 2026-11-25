@@ -57,6 +57,34 @@ jobs:
         if: always()
         run: docker rm -f democyber-test || true
 
+      - name: Scanner image Docker avec Trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: 'democyber:latest'
+          format: 'table'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+
+
+      - name: Generer rapport Trivy
+        if: always()
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: 'democyber:latest'
+          format: 'json'
+          output: 'trivy-report.json'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Sauvegarder rapport Trivy
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-security-report
+          path: trivy-report.json
+          if-no-files-found: warn
+
+
       - name: Connexion Docker Hub
         if: github.event_name == 'push'
         uses: docker/login-action@v4
