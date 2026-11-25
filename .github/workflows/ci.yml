@@ -38,6 +38,25 @@ jobs:
       - name: Construire image Docker
         run: docker build -t democyber:latest .
 
+      - name: Tester image Docker localement
+        run: |
+          docker run -d --name democyber-test -p 8080:8080 democyber:latest
+          for i in {1..30}; do
+            if curl --fail --silent http://localhost:8080; then
+              echo "Application Docker fonctionnelle"
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "Erreur : application non accessible"
+          docker logs democyber-test
+          exit 1
+
+      - name: Nettoyer le conteneur de test
+        if: always()
+        run: docker rm -f democyber-test || true
+
       - name: Connexion Docker Hub
         if: github.event_name == 'push'
         uses: docker/login-action@v4
