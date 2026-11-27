@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CyberShield - Plateforme DevSecOps de supervision et de sécurité">
+
+    <title>CyberShield | Security Dashboard</title>
+
+    <link rel="stylesheet" href="/style.css">
+    <script src="/script.js" defer></script>
+</head>
+
+<body>
+
+    <!-- Menu lateral -->
+    <aside class="sidebar">
+        <div class="logo">
+            <span class="logo-icon">◆</span>
+            <h2>CyberShield</h2>
+        </div>
+
+        <p class="menu-label">PLATEFORME DEVSECOPS</p>
+
+        <nav aria-label="Navigation principale">
+            <a class="nav-link active" href="#overview">◈ Dashboard</a>
+            <a class="nav-link" href="#security">◇ Security</a>
+            <a class="nav-link" href="#pipeline">◇ CI/CD Pipeline</a>
+            <a class="nav-link" href="#monitoring">◇ Monitoring</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <span class="status-dot"></span>
+            CyberShield Platform
+        </div>
+    </aside>
+
+    <!-- Contenu principal -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">SECURITY OPERATIONS CENTER</p>
+                <h1>Security Dashboard</h1>
+                <p class="subtitle">
+                    Supervision et securite de notre application DevSecOps
+                </p>
+            </div>
+
+            <span class="environment-badge">DEMO ENVIRONMENT</span>
+        </header>
+
+        <!-- Presentation -->
+        <section id="overview" class="welcome-section">
+            <div>
+                <p class="eyebrow">WELCOME TO CYBERSHIELD</p>
+                <h2>Build Secure. Deploy Smart. Monitor Everything.</h2>
+                <p>
+                    Une plateforme qui regroupe les controles
+                    de securite, le pipeline CI/CD et la supervision
+                    de notre application Spring Boot.
+                </p>
+                <a class="primary-button" href="#monitoring">
+                    Explorer le monitoring
+                </a>
+            </div>
+            <div class="hero-symbol" aria-hidden="true">◈</div>
+        </section>
+
+        <!-- Cartes principales -->
+        <section class="metrics-section" aria-labelledby="metrics-title">
+            <h2 id="metrics-title" class="section-title">
+                Vue generale
+            </h2>
+
+            <div class="metrics-grid">
+
+                <article class="metric-card">
+                    <p>Application Status</p>
+                    <h3 id="app-status">En attente</h3>
+                    <span>Etat du backend Spring Boot</span>
+                </article>
+
+                <article class="metric-card">
+                    <p>Security Status</p>
+                    <h3>Non verifie</h3>
+                    <span>Derniere analyse de securite</span>
+                </article>
+
+                <article class="metric-card">
+                    <p>CI/CD Pipeline</p>
+                    <h3>Non connecte</h3>
+                    <span>GitHub Actions</span>
+                </article>
+
+                <article class="metric-card">
+                    <p>Monitoring</p>
+                    <h3>Non connecte</h3>
+                    <span>Prometheus et Grafana</span>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- Securite -->
+        <section id="security" class="content-section">
+            <div class="section-heading">
+                <h2>Security Analysis</h2>
+                <p>Outils de verification de securite</p>
+            </div>
+
+            <div class="tools-grid">
+                <article class="tool-card">
+                    <h3>Gitleaks</h3>
+                    <p>Detection des secrets exposes dans le depot Git.</p>
+                </article>
+
+                <article class="tool-card">
+                    <h3>Trivy</h3>
+                    <p>Analyse des vulnerabilites des images Docker.</p>
+                </article>
+
+                <article class="tool-card">
+                    <h3>SonarCloud</h3>
+                    <p>Analyse de la securite et de la qualite du code.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- Pipeline -->
+        <section id="pipeline" class="content-section">
+            <div class="section-heading">
+                <h2>CI/CD Pipeline</h2>
+                <p>Etapes de notre automatisation DevSecOps</p>
+            </div>
+
+            <div class="pipeline-steps">
+                <span>GitHub</span>
+                <span>Build Maven</span>
+                <span>Security Scans</span>
+                <span>Docker</span>
+                <span>Deployment</span>
+            </div>
+
+            <p class="section-note">
+                Cette section presente le processus CI/CD.
+                Son statut sera connecte aux resultats reels.
+            </p>
+        </section>
+
+        <!-- Monitoring -->
+        <section id="monitoring" class="content-section">
+            <div class="section-heading">
+                <h2>Live Monitoring</h2>
+                <p>Observation des performances de l'application</p>
+            </div>
+
+            <div class="monitoring-grid">
+                <article class="monitoring-card">
+                    <h3>CPU Usage</h3>
+                    <p>Donnees Prometheus a connecter</p>
+                </article>
+
+                <article class="monitoring-card">
+                    <h3>JVM Memory</h3>
+                    <p>Donnees Prometheus a connecter</p>
+                </article>
+
+                <article class="monitoring-card">
+                    <h3>HTTP Requests</h3>
+                    <p>Donnees Prometheus a connecter</p>
+                </article>
+            </div>
+        </section>
+
+        <footer class="footer">
+            CyberShield - Projet DevSecOps | Spring Boot
+        </footer>
+
+    </main>
+
+</body>
+</html>

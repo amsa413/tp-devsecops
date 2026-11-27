@@ -1,5 +1,5 @@
 
-name: CI-CD democyber
+name: CI-CD CyberShield
 
 on:
   push:
@@ -15,16 +15,19 @@ jobs:
       contents: read
 
     steps:
-      - name: Recuperer le code
+      # ETAPE 1 : Recuperer le projet
+      - name: Recuperer le code CyberShield
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           fetch-depth: 0
 
+      # ETAPE 2 : Detection des secrets - TP2
       - name: Scanner les secrets avec Gitleaks
         uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # ETAPE 3 : Installer Java - TP1
       - name: Installer Java 21
         uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
@@ -32,9 +35,11 @@ jobs:
           java-version: '21'
           cache: maven
 
-      - name: Compiler et tester
-        run: mvn clean package
+      # ETAPE 4 : Compilation Maven - TP1
+      - name: Compiler et tester CyberShield
+        run: mvn -B clean package
 
+      # ETAPE 5 : Analyse du code - TP3
       - name: Analyser le code avec SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -44,56 +49,73 @@ jobs:
           mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.organization="$SONAR_ORGANIZATION" \
-            -Dsonar.projectKey="$SONAR_PROJECT_KEY"
+            -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
+            -Dsonar.qualitygate.wait=true
 
-      - name: Construire image Docker
-        run: docker build -t democyber:latest .
+      # ETAPE 6 : Construire l'image Docker - TP1
+      - name: Construire image Docker CyberShield
+        run: docker build -t cybershield:latest .
 
-      - name: Tester image Docker localement
+      # ETAPE 7 : Tester l'application dans Docker
+      - name: Tester CyberShield dans Docker
         run: |
-          docker run -d --name democyber-test -p 8080:8080 democyber:latest
+          docker run -d \
+            --name cybershield-test \
+            -p 127.0.0.1:8080:8080 \
+            cybershield:latest
+
           for i in {1..30}; do
-            if curl --fail --silent http://localhost:8080; then
-              echo "Application Docker fonctionnelle"
+            if curl --fail --silent \
+              http://localhost:8080/actuator/health \
+              | grep -q '"status":"UP"'; then
+              echo "CyberShield fonctionne : statut UP"
               exit 0
             fi
+
             sleep 2
           done
 
-          echo "Erreur : application non accessible"
-          docker logs democyber-test
+          echo "Erreur : CyberShield ne repond pas correctement"
+          docker logs cybershield-test
           exit 1
 
+      # ETAPE 8 : Nettoyer le conteneur de test
       - name: Nettoyer le conteneur de test
         if: always()
-        run: docker rm -f democyber-test || true
+        run: docker rm -f cybershield-test || true
 
+      # ETAPE 9 : Scanner les vulnerabilites - TP2
       - name: Scanner image Docker avec Trivy
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: 'democyber:latest'
+          image-ref: 'cybershield:latest'
           format: 'table'
           severity: 'HIGH,CRITICAL'
           exit-code: '1'
+          timeout: '20m'
 
+      # ETAPE 10 : Generer rapport de securite
       - name: Generer rapport Trivy
         if: always()
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: 'democyber:latest'
+          image-ref: 'cybershield:latest'
           format: 'json'
           output: 'trivy-report.json'
           severity: 'HIGH,CRITICAL'
           exit-code: '0'
+          timeout: '20m'
 
+      # ETAPE 11 : Sauvegarder rapport Trivy
       - name: Sauvegarder rapport Trivy
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: trivy-security-report
+          name: cybershield-trivy-report
           path: trivy-report.json
           if-no-files-found: warn
 
+      # ETAPE 12 : Connexion securisee a Docker Hub
       - name: Connexion Docker Hub
         if: github.event_name == 'push'
         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
@@ -101,10 +123,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Publier image Docker
+      # ETAPE 13 : Publier l'image Docker
+      - name: Publier CyberShield sur Docker Hub
         if: github.event_name == 'push'
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          docker tag democyber:latest "$DOCKERHUB_USERNAME/democyber:latest"
-          docker push "$DOCKERHUB_USERNAME/democyber:latest"
+          docker tag cybershield:latest "$DOCKERHUB_USERNAME/cybershield:latest"
+          docker push "$DOCKERHUB_USERNAME/cybershield:latest"
